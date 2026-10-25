@@ -22,9 +22,11 @@ export default async function handler(req, res) {
         flight: String(s.flight), from: String(s.from).toUpperCase(), to: String(s.to).toUpperCase(),
         departs: String(s.departs || ''), arrives: String(s.arrives || ''),
         gate: String(s.gate || ''), seat: String(s.seat || ''),
+        cabin: String(s.cabin || ''), group: String(s.group || ''),
+        fromCity: String(s.fromCity || ''), toCity: String(s.toCity || ''),
       }));
       const rec = {
-        code, firstName: String(b.firstName), lastName: String(b.lastName), email: String(b.email || ''),
+        code, ticket: String(b.ticket || '7' + String(Math.floor(Math.random() * 1e12)).padStart(12, '0')), firstName: String(b.firstName), lastName: String(b.lastName), email: String(b.email || ''),
         status: String(b.status || 'Confirmed'), segments, createdAt: b.createdAt || Date.now(),
       };
       await cmd('SET', 'res:' + code, JSON.stringify(rec));
