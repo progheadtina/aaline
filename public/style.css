@@ -33,3 +33,59 @@ table{width:100%;border-collapse:collapse;font-size:14px}td,th{text-align:left;p
 @media(min-width:640px){.tk{flex-direction:row}.tk-code{border-top:0;border-left:2px dashed #888;width:130px}.tk-code .bars{height:230px;width:90px}}
 .pass>p{padding:10px 0 0;margin:0}
 @media print{body{background:#fff;color:#000}header,form,.noprint,.card:not(.pass){display:none!important}}
+
+/* ===== AEROTRACE BOARDING PASS (thermal-ticket style) ===== */
+.pass{padding:0;background:transparent;border:0}
+.pass:empty{display:none}
+.bp-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.bp-tabs button{padding:8px 12px;font-size:14px}
+.bp-tabs .on{background:var(--blue);color:#fff}
+.bp-wrap{margin-bottom:16px}
+.bp{--ink:#23262b;--paper:#fbfbf8;--rule:#3a3d42;display:grid;grid-template-columns:34px minmax(0,1fr) 112px;
+  background:var(--paper);color:var(--ink);font-family:"Courier New","Lucida Console",ui-monospace,monospace;
+  border:1px solid #c9ccd1;border-radius:10px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,.18);
+  -webkit-print-color-adjust:exact;print-color-adjust:exact}
+.bp-side{display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:12px 0;
+  border-right:1px solid #e1e3e6;font-size:7.5px;line-height:1.1}
+.bp-side span{writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap}
+.bp-staple{border:1px solid var(--ink);padding:6px 3px;font-size:10px;font-weight:700;line-height:1.3;text-align:center}
+.bp-main{padding:14px 16px 12px;display:flex;flex-direction:column;min-width:0}
+.bp-top{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start}
+.bp-brand{display:flex;align-items:center;gap:6px 14px;flex-wrap:wrap}
+.bp-word{font-weight:700;letter-spacing:2px;font-size:14px}
+.bp-logo{height:26px;width:auto}
+.bp-pri{font-weight:700;font-size:15px}
+.bp-cab{font-weight:800;font-size:22px;letter-spacing:1px}
+.bp-ref{display:grid;grid-template-columns:repeat(3,auto);gap:2px 14px;font-size:11px}
+.bp-name{font-size:18px;font-weight:700;margin-top:10px}
+.bp-sub{font-size:11px}
+.bp-city{font-size:15px;font-weight:700;margin-top:6px}
+.bp-dash{border-top:2px dashed var(--rule);margin:8px 0}
+.bp-data{display:grid;grid-template-columns:1.55fr .8fr 1.7fr .8fr .7fr;grid-template-areas:"r g b s gr";gap:10px;align-items:start}
+.bp-r{grid-area:r}.bp-g{grid-area:g}.bp-b{grid-area:b}.bp-s{grid-area:s}.bp-gr{grid-area:gr;text-align:center}
+.bp-data small{display:block;font-size:10px;text-transform:uppercase;margin-bottom:2px}
+.bp-big{font-size:30px;font-weight:700;line-height:1.05;letter-spacing:1px}
+.bp-note{font-size:9.5px;margin-top:4px}
+.bp-bgn{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
+.bp-times{font-size:10px;line-height:1.55;white-space:nowrap}
+.bp-foot{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;font-size:11px;line-height:1.5}
+.bp-foot b{font-size:15px}.bp-thanks{font-size:10px;letter-spacing:.5px}
+.bp-code{padding:12px 14px 12px 6px;color:#000;display:flex}
+.bp-code svg{width:100%;height:100%;min-height:210px}
+@media (max-width:639px){
+  .bp{grid-template-columns:minmax(0,1fr)}
+  .bp-side{display:none}
+  .bp-top{grid-template-columns:1fr}
+  .bp-data{grid-template-columns:1fr 1fr;grid-template-areas:"r r" "g s" "b b" "gr gr"}
+  .bp-gr{text-align:left}
+  .bp-big{font-size:26px}
+  .bp-code{padding:12px 16px 14px;border-top:2px dashed var(--rule)}
+  .bp-code svg{height:64px;min-height:0}
+}
+@page{size:landscape;margin:10mm}
+@media print{
+  body{background:#fff}
+  header,form,.noprint,.bp-tabs,.card:not(.pass){display:none!important}
+  .bp{box-shadow:none;break-inside:avoid;grid-template-columns:34px minmax(0,1fr) 112px}
+  .bp-wrap{break-inside:avoid;margin-bottom:10mm}
+}
