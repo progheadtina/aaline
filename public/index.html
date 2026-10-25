@@ -5,179 +5,748 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Find Your Trip | AeroTrace</title>
 <link rel="stylesheet" href="/style.css">
+
 <style>
 :root {
   --air-navy: #071d49;
   --air-blue: #174ea6;
   --air-red: #c41230;
 }
-body { margin:0; background:#f5f6f8; color:#172238; font-family:Arial,Helvetica,sans-serif; }
-header {
-  background:#ffffff; color:#071d49; padding:22px max(5%,calc((100% - 1160px)/2));
-  border-bottom:4px solid var(--air-red); display:flex; justify-content:space-between;
-  align-items:center; gap:16px;
+
+* {
+  box-sizing: border-box;
 }
-header b { font-size:24px; letter-spacing:2px; }
-header span { color:#e3e9f3; }
-.topline { background:#fff; border-bottom:1px solid #ddd; padding:12px 5%; color:#39465c; font-size:13px; }
-.topline div { max-width:1160px; margin:auto; }
-main { width:min(1160px,90%); margin:38px auto 70px; }
-.intro { margin-bottom:28px; }
-.intro .eyebrow { color:var(--air-blue); font-size:12px; font-weight:bold; letter-spacing:1.8px; text-transform:uppercase; }
-h1 { color:var(--air-navy); font-size:clamp(30px,4vw,42px); margin:8px 0 12px; letter-spacing:-1px; }
-.intro p { color:#586579; max-width:690px; line-height:1.7; }
-.layout { display:grid; grid-template-columns:minmax(0, 2fr) minmax(230px, 1fr); gap:26px; align-items:start; }
-.lookup { background:white; border:1px solid #dce1e8; border-radius:5px; box-shadow:0 4px 18px #071d490c; }
-.panel-title { background:#edf1f7; padding:17px 24px; border-bottom:1px solid #dce1e8; color:var(--air-navy); font-size:18px; font-weight:bold; }
-.panel-body { padding:25px; }
-.panel-body .sub { color:#586579; line-height:1.6; margin-top:0; margin-bottom:23px; }
-.field { margin-bottom:19px; }
-label { display:block; font-weight:bold; font-size:13px; color:#27354b; margin-bottom:8px; }
-input { width:100%; min-height:48px; padding:12px 14px; border:1px solid #aeb8c7; border-radius:3px; font-size:15px; background:white; }
-input:focus { outline:2px solid #8ab4f8; border-color:var(--air-blue); }
-.form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-.search-button { width:100%; min-height:49px; background:var(--air-blue); color:white; border:0; border-radius:3px; font-weight:bold; font-size:15px; cursor:pointer; }
-.search-button:hover { background:var(--air-navy); }
-.note { font-size:12px; color:#667186; line-height:1.6; margin-top:18px; }
-.sidebox { background:white; border:1px solid #dce1e8; padding:23px; border-radius:5px; }
-.sidebox h2 { color:var(--air-navy); font-size:18px; margin:0 0 12px; }
-.sidebox p { color:#586579; font-size:14px; line-height:1.7; }
-.sidebox a { color:var(--air-blue); font-weight:bold; }
-#msg:empty { display:none; }
-#msg { margin-top:16px; padding:12px; background:#fff0f1; color:#9e1028; border:1px solid #f1c2c8; border-radius:3px; }
-#out { margin-top:28px; }
-#out .card { background:white; border:1px solid #dce1e8; border-radius:5px; padding:25px; margin-bottom:20px; }
-#out h2 { color:var(--air-navy); }
-.pill { display:inline-block; border-radius:20px; background:#e5f4e9; color:#17643b; padding:5px 10px; font-size:12px; }
-.seg { border-top:1px solid #e0e5ec; padding:18px 0; }
-.route { color:var(--air-navy); font-size:23px; font-weight:bold; margin:10px 0; }
-.meta { color:#647086; font-size:13px; line-height:1.8; }
-.pass { background:white; border:1px solid #dce1e8; }
-.ph { background:var(--air-navy); color:white; padding:20px; display:flex; justify-content:space-between; gap:12px; }
-.pb { padding:22px; }
-.pn { font-weight:bold; font-size:18px; margin:5px 0 20px; }
-.prow { display:flex; justify-content:space-between; align-items:center; gap:15px; margin:18px 0; }
-.big { color:var(--air-navy); font-size:25px; font-weight:bold; }
-.pgrid { display:grid; grid-template-columns:1fr 1fr; gap:17px; margin-top:20px; }
-.bars { display:block; width:100%; height:48px; margin-top:20px; }
-button.sec { background:#e9edf4; color:var(--air-navy); }
-footer { background:#fff; border-top:1px solid #dce1e8; padding:25px 5%; text-align:center; color:#687286; font-size:12px; }
-@media(max-width:760px) {
-  header { align-items:flex-start; flex-direction:column; padding:18px 5%; gap:5px; }
-  .layout { grid-template-columns:1fr; }
-  .form-row { grid-template-columns:1fr; gap:0; }
-  main { margin-top:28px; }
-  .panel-body { padding:20px; }
+
+body {
+  margin: 0;
+  background: #f5f6f8;
+  color: #172238;
+  font-family: Arial, Helvetica, sans-serif;
 }
+
+/* HEADER */
+header.site-header {
+  background: #ffffff;
+  color: var(--air-navy);
+  padding: 18px 5%;
+  border-bottom: 1px solid #d9dce2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 28px;
+}
+
+.site-logo {
+  display: block;
+  height: 48px;
+  width: auto;
+  max-width: 220px;
+  object-fit: contain;
+}
+
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: 34px;
+  color: var(--air-navy);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.main-nav span {
+  color: var(--air-navy);
+  white-space: nowrap;
+  cursor: default;
+}
+
+.topline {
+  background: #ffffff;
+  border-bottom: 1px solid #dddddd;
+  padding: 12px 5%;
+  color: #39465c;
+  font-size: 13px;
+}
+
+.topline div {
+  max-width: 1160px;
+  margin: auto;
+}
+
+/* MAIN CONTENT */
+main {
+  width: min(1160px, 90%);
+  margin: 38px auto 70px;
+}
+
+/* FIND YOUR TRIP BOX */
+.intro {
+  background: #ffffff;
+  border: 1px solid #dce1e8;
+  border-top: 4px solid var(--air-red);
+  padding: 24px 28px;
+  margin-bottom: 28px;
+  border-radius: 3px;
+}
+
+.intro .eyebrow {
+  color: var(--air-blue);
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+}
+
+.intro h1 {
+  color: var(--air-navy);
+  font-size: clamp(30px, 4vw, 36px);
+  margin: 8px 0 12px;
+  letter-spacing: -0.5px;
+}
+
+.intro p {
+  color: #586579;
+  max-width: 690px;
+  line-height: 1.7;
+  margin-bottom: 0;
+}
+
+/* BOOKING FORM AND HELP PANEL */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(230px, 1fr);
+  gap: 26px;
+  align-items: start;
+}
+
+.lookup {
+  background: #ffffff;
+  border: 1px solid #dce1e8;
+  border-radius: 5px;
+  box-shadow: 0 4px 18px #071d490c;
+}
+
+.panel-title {
+  background: #edf1f7;
+  padding: 17px 24px;
+  border-bottom: 1px solid #dce1e8;
+  color: var(--air-navy);
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.panel-body {
+  padding: 25px;
+}
+
+.panel-body .sub {
+  color: #586579;
+  line-height: 1.6;
+  margin-top: 0;
+  margin-bottom: 23px;
+}
+
+.field {
+  margin-bottom: 19px;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  font-size: 13px;
+  color: #27354b;
+  margin-bottom: 8px;
+}
+
+input {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
+  border: 1px solid #aeb8c7;
+  border-radius: 3px;
+  font-size: 15px;
+  background: #ffffff;
+  color: #172238;
+}
+
+input:focus {
+  outline: 2px solid #8ab4f8;
+  border-color: var(--air-blue);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.search-button {
+  width: 100%;
+  min-height: 49px;
+  background: var(--air-blue);
+  color: #ffffff;
+  border: 0;
+  border-radius: 3px;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.search-button:hover {
+  background: var(--air-navy);
+}
+
+.search-button:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.note {
+  font-size: 12px;
+  color: #667186;
+  line-height: 1.6;
+  margin-top: 18px;
+}
+
+.sidebox {
+  background: #ffffff;
+  border: 1px solid #dce1e8;
+  padding: 23px;
+  border-radius: 5px;
+}
+
+.sidebox h2 {
+  color: var(--air-navy);
+  font-size: 18px;
+  margin: 0 0 12px;
+}
+
+.sidebox p {
+  color: #586579;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* SEARCH MESSAGES AND RESULTS */
+#msg:empty {
+  display: none;
+}
+
+#msg {
+  margin-top: 16px;
+  padding: 12px;
+  background: #fff0f1;
+  color: #9e1028;
+  border: 1px solid #f1c2c8;
+  border-radius: 3px;
+}
+
+#out {
+  margin-top: 28px;
+}
+
+#out .card {
+  background: #ffffff;
+  border: 1px solid #dce1e8;
+  border-radius: 5px;
+  padding: 25px;
+  margin-bottom: 20px;
+}
+
+#out h2 {
+  color: var(--air-navy);
+}
+
+.pill {
+  display: inline-block;
+  border-radius: 20px;
+  background: #e5f4e9;
+  color: #17643b;
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+.seg {
+  border-top: 1px solid #e0e5ec;
+  padding: 18px 0;
+}
+
+.route {
+  color: var(--air-navy);
+  font-size: 23px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.meta {
+  color: #647086;
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.pass {
+  background: #ffffff;
+  border: 1px solid #dce1e8;
+}
+
+.ph {
+  background: var(--air-navy);
+  color: #ffffff;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pb {
+  padding: 22px;
+}
+
+.pn {
+  font-weight: bold;
+  font-size: 18px;
+  margin: 5px 0 20px;
+}
+
+.prow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin: 18px 0;
+}
+
+.big {
+  color: var(--air-navy);
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.pgrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 17px;
+  margin-top: 20px;
+}
+
+.bars {
+  display: block;
+  width: 100%;
+  height: 48px;
+  margin-top: 20px;
+}
+
+button.sec {
+  background: #e9edf4;
+  color: var(--air-navy);
+  border: 0;
+  border-radius: 3px;
+  padding: 11px 16px;
+  cursor: pointer;
+}
+
+footer {
+  background: #ffffff;
+  border-top: 1px solid #dce1e8;
+  padding: 25px 5%;
+  text-align: center;
+  color: #687286;
+  font-size: 12px;
+}
+
+/* MOBILE LAYOUT */
+@media (max-width: 760px) {
+  header.site-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px 5%;
+    gap: 18px;
+  }
+
+  .main-nav {
+    gap: 18px;
+    flex-wrap: wrap;
+    font-size: 13px;
+  }
+
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  main {
+    margin-top: 28px;
+  }
+
+  .panel-body {
+    padding: 20px;
+  }
+
+  .intro {
+    padding: 22px 20px;
+  }
+
+  .prow {
+    gap: 8px;
+  }
+
+  .big {
+    font-size: 20px;
+  }
+}
+
+/* PRINT BOARDING PASS */
 @media print {
-  header,.topline,footer,.intro,.layout,button { display:none!important; }
-  main { width:100%; margin:0; }
-  #out { margin:0; }
+  header,
+  .topline,
+  footer,
+  .intro,
+  .layout,
+  button {
+    display: none !important;
+  }
+
+  main {
+    width: 100%;
+    margin: 0;
+  }
+
+  #out {
+    margin: 0;
+  }
 }
 </style>
 </head>
-<body>
-<header>
-  <header class="site-header">
-  <img src="/aa-logo.png" alt="AeroTrace Logo" class="site-logo">
 
-  <nav class="main-nav">
+<body>
+
+<header class="site-header">
+  <img
+    src="/aa-logo.png"
+    alt="AeroTrace"
+    class="site-logo"
+  >
+
+  <nav class="main-nav" aria-label="Main navigation">
     <span>Plan travel</span>
     <span>Travel Information</span>
     <span>AAdvantage</span>
   </nav>
 </header>
 
-<div class="topline"><div>Home &nbsp; / &nbsp; Find your trip</div></div>
+<div class="topline">
+  <div>Home &nbsp; / &nbsp; Find your trip</div>
+</div>
 
 <main>
+
   <section class="intro">
     <div class="eyebrow">Your journey starts here</div>
     <h1>Find your trip</h1>
-    <p>Access your reservation details with your confirmation code and passenger information.</p>
+    <p>
+      Access your reservation details with your confirmation code
+      and passenger information.
+    </p>
   </section>
 
   <div class="layout">
+
     <section class="lookup">
       <div class="panel-title">Retrieve your reservation</div>
+
       <div class="panel-body">
-        <p class="sub">Enter the information exactly as it appears on your booking confirmation.</p>
+        <p class="sub">
+          Enter the information exactly as it appears on your booking confirmation.
+        </p>
+
         <form id="f">
           <div class="field">
             <label for="code">Confirmation code</label>
-            <input id="code" maxlength="6" autocapitalize="characters" required placeholder="Enter booking code">
+            <input
+              id="code"
+              maxlength="6"
+              autocapitalize="characters"
+              required
+              placeholder="Enter booking code"
+            >
           </div>
+
           <div class="form-row">
             <div class="field">
               <label for="fn">First name</label>
-              <input id="fn" autocomplete="given-name" required placeholder="First name">
+              <input
+                id="fn"
+                autocomplete="given-name"
+                required
+                placeholder="First name"
+              >
             </div>
+
             <div class="field">
               <label for="ln">Last name</label>
-              <input id="ln" autocomplete="family-name" required placeholder="Last name">
+              <input
+                id="ln"
+                autocomplete="family-name"
+                required
+                placeholder="Last name"
+              >
             </div>
           </div>
-          <button class="search-button" type="submit">Find reservation</button>
-          <div id="msg"></div>
+
+          <button class="search-button" type="submit">
+            Find reservation
+          </button>
+
+          <div id="msg" role="alert"></div>
         </form>
-        <p class="note">For your security, the passenger names must match the reservation details.</p>
+
+        <p class="note">
+          For your security, the passenger names must match the reservation details.
+        </p>
       </div>
     </section>
 
     <aside class="sidebox">
       <h2>Need help?</h2>
-      <p>Use the confirmation code shown on your itinerary or booking confirmation.</p>
-      <p>Check that the passenger's first and last names are entered correctly, then search again.</p>
+      <p>
+        Use the confirmation code shown on your itinerary or booking confirmation.
+      </p>
+      <p>
+        Check that the passenger's first and last names are entered correctly,
+        then search again.
+      </p>
       <p><strong>Keep your booking details private.</strong></p>
     </aside>
+
   </div>
 
   <div id="out"></div>
+
 </main>
 
 <footer>© AeroTrace · Reservation lookup</footer>
 
 <script>
-const $=id=>document.getElementById(id);
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $ = id => document.getElementById(id);
+
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;'
+}[c]));
+
 let R;
-const fmt=v=>{if(!v)return '—';const d=new Date(v);return isNaN(d)?esc(v):d.toLocaleString([],{dateStyle:'medium',timeStyle:'short'})};
-const boardAt=v=>{const d=new Date(v);return(!v||isNaN(d))?'—':new Date(d.getTime()-40*60000).toLocaleTimeString([],{timeStyle:'short'})};
-const bars=str=>{let h=0,x=0,o='';for(let i=0;i<64;i++){h=(h*31+str.charCodeAt(i%str.length)+i)>>>0;const w=1+h%3;if(i%2==0)o+=`<rect x="${x}" y="0" width="${w}" height="50"/>`;x+=w+1}return `<svg viewBox="0 0 ${x} 50" preserveAspectRatio="none" class="bars" fill="currentColor">${o}</svg>`};
-window.pass=i=>{
-  const s=R.segments[i],name=(R.lastName+'/'+R.firstName).toUpperCase();
-  $('pass').innerHTML=`<div class="ph"><b>✈ AEROTRACE</b><span>BOARDING PASS</span></div>
-  <div class="pb"><div class="meta">PASSENGER</div><div class="pn">${esc(name)}</div>
-  <div class="prow"><div><div class="meta">FROM</div><div class="big">${esc(s.from)}</div></div><div class="big">✈</div><div><div class="meta">TO</div><div class="big">${esc(s.to)}</div></div></div>
-  <div class="pgrid"><div><div class="meta">FLIGHT</div><b>${esc(s.flight)}</b></div><div><div class="meta">GATE</div><b>${esc(s.gate)||'TBD'}</b></div>
-  <div><div class="meta">SEAT</div><b>${esc(s.seat)||'—'}</b></div><div><div class="meta">BOARDS</div><b>${boardAt(s.departs)}</b></div>
-  <div><div class="meta">DEPARTS</div><b>${fmt(s.departs)}</b></div><div><div class="meta">CODE</div><b>${esc(R.code)}</b></div></div>
-  ${bars(R.code+s.flight+name)}<div class="meta" style="text-align:center">${esc(R.code)} · ${esc(s.flight)}</div></div>
-  <p class="noprint"><button onclick="print()">Print / Save as PDF</button> <button class="sec" onclick="$('pass').innerHTML=''">Close</button></p>`;
-  $('pass').scrollIntoView({behavior:'smooth'});
+
+const fmt = v => {
+  if (!v) return '—';
+  const d = new Date(v);
+  return isNaN(d)
+    ? esc(v)
+    : d.toLocaleString([], {
+        dateStyle: 'medium',
+        timeStyle: 'short'
+      });
 };
-$('f').onsubmit=async e=>{
-  e.preventDefault();$('msg').textContent='';$('out').innerHTML='';
-  const submit=$('f').querySelector('button[type="submit"]');
-  submit.disabled=true;submit.textContent='Searching…';
-  try{
-    const r=await fetch('/api/lookup',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({code:$('code').value,firstName:$('fn').value,lastName:$('ln').value})});
-    const d=await r.json();
-    if(!r.ok){$('msg').textContent=d.error||'Reservation not found. Check your details and try again.';return}
-    R=d;const ok=!/cancel/i.test(d.status);
-    $('out').innerHTML=`<div class="card"><h2>${esc(d.firstName)} ${esc(d.lastName)} <span class="pill">${esc(d.status)}</span></h2>
-      <div class="meta">Confirmation code: <b>${esc(d.code)}</b></div>
-      ${d.segments.map((s,i)=>`<div class="seg"><div class="route">${esc(s.from)} → ${esc(s.to)}</div>
-      <div class="meta">Flight ${esc(s.flight)}</div>
-      <div class="meta">Departs: ${fmt(s.departs)} &nbsp; Arrives: ${fmt(s.arrives)}</div>
-      <div class="meta">Gate: ${esc(s.gate)||'TBD'} &nbsp; Seat: ${esc(s.seat)||'Unassigned'}</div>
-      ${ok?`<p><button class="sec" onclick="pass(${i})">View boarding pass</button></p>`:''}</div>`).join('')}</div>
-      <div class="card pass" id="pass"></div>`;
-    $('out').scrollIntoView({behavior:'smooth'});
-  }catch{$('msg').textContent='Network error. Please try again.'}
-  finally{submit.disabled=false;submit.textContent='Find reservation'}
+
+const boardAt = v => {
+  const d = new Date(v);
+  return (!v || isNaN(d))
+    ? '—'
+    : new Date(d.getTime() - 40 * 60000)
+        .toLocaleTimeString([], { timeStyle: 'short' });
+};
+
+const bars = str => {
+  let h = 0, x = 0, o = '';
+
+  for (let i = 0; i < 64; i++) {
+    h = (h * 31 + str.charCodeAt(i % str.length) + i) >>> 0;
+    const w = 1 + h % 3;
+
+    if (i % 2 === 0) {
+      o += `<rect x="${x}" y="0" width="${w}" height="50"/>`;
+    }
+
+    x += w + 1;
+  }
+
+  return `<svg viewBox="0 0 ${x} 50"
+    preserveAspectRatio="none"
+    class="bars"
+    fill="currentColor">${o}</svg>`;
+};
+
+/* BOARDING PASS */
+window.pass = i => {
+  const s = R.segments[i];
+  const name = (R.lastName + '/' + R.firstName).toUpperCase();
+
+  $('pass').innerHTML = `
+    <div class="ph">
+      <b>AEROTRACE</b>
+      <span>BOARDING PASS</span>
+    </div>
+
+    <div class="pb">
+      <div class="meta">PASSENGER</div>
+      <div class="pn">${esc(name)}</div>
+
+      <div class="prow">
+        <div>
+          <div class="meta">FROM</div>
+          <div class="big">${esc(s.from)}</div>
+        </div>
+
+        <div class="big">✈</div>
+
+        <div>
+          <div class="meta">TO</div>
+          <div class="big">${esc(s.to)}</div>
+        </div>
+      </div>
+
+      <div class="pgrid">
+        <div>
+          <div class="meta">FLIGHT</div>
+          <b>${esc(s.flight)}</b>
+        </div>
+
+        <div>
+          <div class="meta">GATE</div>
+          <b>${esc(s.gate) || 'TBD'}</b>
+        </div>
+
+        <div>
+          <div class="meta">SEAT</div>
+          <b>${esc(s.seat) || '—'}</b>
+        </div>
+
+        <div>
+          <div class="meta">BOARDS</div>
+          <b>${boardAt(s.departs)}</b>
+        </div>
+
+        <div>
+          <div class="meta">DEPARTS</div>
+          <b>${fmt(s.departs)}</b>
+        </div>
+
+        <div>
+          <div class="meta">CODE</div>
+          <b>${esc(R.code)}</b>
+        </div>
+      </div>
+
+      ${bars(R.code + s.flight + name)}
+
+      <div class="meta" style="text-align:center">
+        ${esc(R.code)} · ${esc(s.flight)}
+      </div>
+    </div>
+
+    <p class="noprint">
+      <button onclick="print()">Print / Save as PDF</button>
+      <button class="sec" onclick="$('pass').innerHTML=''">Close</button>
+    </p>
+  `;
+
+  $('pass').scrollIntoView({ behavior: 'smooth' });
+};
+
+/* RESERVATION SEARCH — KEEPING THE EXISTING API */
+$('f').onsubmit = async e => {
+  e.preventDefault();
+
+  $('msg').textContent = '';
+  $('out').innerHTML = '';
+
+  const submit = $('f').querySelector('button[type="submit"]');
+  submit.disabled = true;
+  submit.textContent = 'Searching…';
+
+  try {
+    const r = await fetch('/api/lookup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        code: $('code').value,
+        firstName: $('fn').value,
+        lastName: $('ln').value
+      })
+    });
+
+    const d = await r.json();
+
+    if (!r.ok) {
+      $('msg').textContent =
+        d.error || 'Reservation not found. Check your details and try again.';
+      return;
+    }
+
+    R = d;
+    const ok = !/cancel/i.test(d.status);
+
+    $('out').innerHTML = `
+      <div class="card">
+        <h2>
+          ${esc(d.firstName)} ${esc(d.lastName)}
+          <span class="pill">${esc(d.status)}</span>
+        </h2>
+
+        <div class="meta">
+          Confirmation code: <b>${esc(d.code)}</b>
+        </div>
+
+        ${d.segments.map((s, i) => `
+          <div class="seg">
+            <div class="route">
+              ${esc(s.from)} → ${esc(s.to)}
+            </div>
+
+            <div class="meta">
+              Flight ${esc(s.flight)}
+            </div>
+
+            <div class="meta">
+              Departs: ${fmt(s.departs)}
+              &nbsp; Arrives: ${fmt(s.arrives)}
+            </div>
+
+            <div class="meta">
+              Gate: ${esc(s.gate) || 'TBD'}
+              &nbsp; Seat: ${esc(s.seat) || 'Unassigned'}
+            </div>
+
+            ${ok
+              ? `<p><button class="sec" onclick="pass(${i})">
+                   View boarding pass
+                 </button></p>`
+              : ''
+            }
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="card pass" id="pass"></div>
+    `;
+
+    $('out').scrollIntoView({ behavior: 'smooth' });
+
+  } catch (err) {
+    $('msg').textContent = 'Network error. Please try again.';
+  } finally {
+    submit.disabled = false;
+    submit.textContent = 'Find reservation';
+  }
 };
 </script>
+
 </body>
 </html>
