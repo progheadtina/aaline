@@ -560,105 +560,60 @@ const boardAt = v => {
     : new Date(d.getTime() - 40 * 60000)
         .toLocaleTimeString([], { timeStyle: 'short' });
 };
+  {
+const DAYS=['SUN','MON','TUES','WED','THUR','FRI','SAT'],MON=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+const p2=n=>String(n).padStart(2,'0');
+const pd=v=>{const d=new Date(v);return v&&!isNaN(d)?d:null};
+const shift=(d,m)=>d?new Date(d.getTime()-m*60000):null;
+const clock=(d,short)=>{if(!d)return '—';const h=d.getHours(),h12=h%12||12,ap=h>=12?'P':'A';
+  return p2(h12)+':'+p2(d.getMinutes())+(short?ap:' '+ap+'M')};
+const dateLine=d=>d?`${DAYS[d.getDay()]} ${MON[d.getMonth()]} ${p2(d.getDate())} ${d.getFullYear()}`:'—';
+const matrix=seed=>{let h=7;for(const c of seed)h=(Math.imul(h,31)+c.charCodeAt(0))>>>0;
+  const C=19,N=72;let o='';
+  for(let y=0;y<N;y++)for(let x=0;x<C;x++){let on;
+    if(x<3)on=((y>>1)&1)?x!==1:x===0;
+    else if(x>C-4)on=((y>>1)&1)?x!==C-2:x===C-1;
+    else{h=(Math.imul(h,1103515245)+12345)>>>0;on=(h>>>16)&1}
+    if(on)o+=`<rect x="${x}" y="${y}" width="1" height="1"/>`}
+  return `<svg viewBox="0 0 ${C} ${N}" preserveAspectRatio="none" fill="currentColor" shape-rendering="crispEdges" aria-hidden="true">${o}</svg>`};
 
-const bars = str => {
-  let h = 0, x = 0, o = '';
+const bp=s=>{
+  const name=(R.lastName+'/'+R.firstName).toUpperCase(),dep=pd(s.departs),arr=pd(s.arrives);
+  const cab=String(s.cabin||'').toUpperCase().trim(),pri=/BUSINESS|FIRST|PREMIUM|PRIORITY/.test(cab);
+  const tk=String(R.ticket||''),gate=String(s.gate||'').trim();
+  const city=(c,a)=>esc(String(c||a||'').toUpperCase());
+  return `<div class="bp-wrap"><div class="bp" role="img" aria-label="Boarding pass for ${esc(name)}, flight ${esc(s.flight)}">
+  <div class="bp-side" aria-hidden="true"><span>AEROTRACE BOARDING PASS</span><span class="bp-staple">STAPLE<br>HERE</span><span>Do not expose to excessive heat or direct sunlight.</span></div>
+  <div class="bp-main">
+    <div class="bp-top">
+      <div class="bp-brand"><img class="bp-logo" src="/aa-logo.png" alt="" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="bp-word">✈ AEROTRACE</span>${pri?'<span class="bp-pri">PRIORITY BOARD</span>':''}${cab?`<span class="bp-cab">${esc(cab)}</span>`:''}</div>
+      <div class="bp-ref"><span>${esc(R.code)}</span><span>${esc(s.seat)}</span><span>${gate?'GATE '+esc(gate):''}</span><span>${esc(s.flight)}</span><span>${esc(tk.slice(-6))}</span></div>
+    </div>
+    <div class="bp-name">${esc(name)}</div>
+    ${tk?`<div class="bp-sub">TKT-•••${esc(tk.slice(-3))}</div>`:''}
+    <div class="bp-city">${city(s.fromCity,s.from)} TO ${city(s.toCity,s.to)}</div>
+    <div class="bp-dash"></div>
+    <div class="bp-data">
+      <div class="bp-r"><small>${esc(s.flight)}</small><div class="bp-big">${esc(s.from)}-${esc(s.to)}</div><div class="bp-note">${dateLine(dep)}</div></div>
+      <div class="bp-g"><small>GATE</small><div class="bp-big">${gate?esc(gate):'TBA'}</div>${gate?'<div class="bp-note">GATE MAY CHANGE</div>':''}</div>
+      <div class="bp-b"><small>BOARDING BEGINS:</small><div class="bp-bgn"><div class="bp-big">${clock(shift(dep,40),1)}</div>
+        <div class="bp-times">BOARDING ENDS: ${clock(shift(dep,15))}<br>FLIGHT DEPARTS: ${clock(dep)}<br>FLIGHT ARRIVES: ${clock(arr)}</div></div></div>
+      <div class="bp-s"><small>SEAT</small><div class="bp-big">${esc(s.seat)||'—'}</div>${cab?`<div class="bp-note">${esc(cab)}</div>`:''}</div>
+      <div class="bp-gr"><small>BOARDING<br>GROUP</small><div class="bp-big">${esc(s.group)||'—'}</div></div>
+    </div>
+    <div class="bp-dash"></div>
+    <div class="bp-foot"><div>CONFIRMATION: <b>${esc(R.code)}</b><br>TICKET: ${esc(tk)||'—'}</div><div class="bp-thanks">THANK YOU FOR FLYING AEROTRACE</div></div>
+  </div>
+  <div class="bp-code">${matrix(R.code+s.flight+name)}</div>
+  </div></div>`};
 
-  for (let i = 0; i < 64; i++) {
-    h = (h * 31 + str.charCodeAt(i % str.length) + i) >>> 0;
-    const w = 1 + h % 3;
-
-    if (i % 2 === 0) {
-      o += `<rect x="${x}" y="0" width="${w}" height="50"/>`;
-    }
-
-    x += w + 1;
+window.pass=i=>{
+  const segs=R.segments,list=i==='all'?segs:[segs[i]];
+  const tabs=segs.length>1?`<div class="bp-tabs noprint">${segs.map((s,k)=>`<button class="sec${k===i?' on':''}" onclick="pass(${k})">${esc(s.from)}–${esc(s.to)}</button>`).join('')}<button class="sec${i==='all'?' on':''}" onclick="pass('all')">All flights</button></div>`:'';
+  $('pass').innerHTML=tabs+list.map(s=>bp(s)).join('')+`<p class="noprint"><button onclick="print()">Print / Save as PDF</button> <button class="sec" onclick="$('pass').innerHTML=''">Close</button></p>`;
+  $('pass').scrollIntoView({behavior:'smooth'});
+};
   }
-
-  return `<svg viewBox="0 0 ${x} 50"
-    preserveAspectRatio="none"
-    class="bars"
-    fill="currentColor">${o}</svg>`;
-};
-
-/* BOARDING PASS */
-window.pass = i => {
-  const s = R.segments[i];
-  const name = (R.lastName + '/' + R.firstName).toUpperCase();
-
-  $('pass').innerHTML = `
-    <div class="ph">
-      <b>AEROTRACE</b>
-      <span>BOARDING PASS</span>
-    </div>
-
-    <div class="pb">
-      <div class="meta">PASSENGER</div>
-      <div class="pn">${esc(name)}</div>
-
-      <div class="prow">
-        <div>
-          <div class="meta">FROM</div>
-          <div class="big">${esc(s.from)}</div>
-        </div>
-
-        <div class="big">✈</div>
-
-        <div>
-          <div class="meta">TO</div>
-          <div class="big">${esc(s.to)}</div>
-        </div>
-      </div>
-
-      <div class="pgrid">
-        <div>
-          <div class="meta">FLIGHT</div>
-          <b>${esc(s.flight)}</b>
-        </div>
-
-        <div>
-          <div class="meta">GATE</div>
-          <b>${esc(s.gate) || 'TBD'}</b>
-        </div>
-
-        <div>
-          <div class="meta">SEAT</div>
-          <b>${esc(s.seat) || '—'}</b>
-        </div>
-
-        <div>
-          <div class="meta">BOARDS</div>
-          <b>${boardAt(s.departs)}</b>
-        </div>
-
-        <div>
-          <div class="meta">DEPARTS</div>
-          <b>${fmt(s.departs)}</b>
-        </div>
-
-        <div>
-          <div class="meta">CODE</div>
-          <b>${esc(R.code)}</b>
-        </div>
-      </div>
-
-      ${bars(R.code + s.flight + name)}
-
-      <div class="meta" style="text-align:center">
-        ${esc(R.code)} · ${esc(s.flight)}
-      </div>
-    </div>
-
-    <p class="noprint">
-      <button onclick="print()">Print / Save as PDF</button>
-      <button class="sec" onclick="$('pass').innerHTML=''">Close</button>
-    </p>
-  `;
-
-  $('pass').scrollIntoView({ behavior: 'smooth' });
-};
-
-/* RESERVATION SEARCH — KEEPING THE EXISTING API */
 $('f').onsubmit = async e => {
   e.preventDefault();
 
