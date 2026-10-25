@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Find your reservation | Aerotrace</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/style.css"></head>
+<body>
+<header><b>✈ AEROTRACE</b><span>Find your reservation</span></header>
+<main>
+  <div class="card">
+    <h1>Find your reservation</h1>
+    <p class="sub">Enter your booking code and name as shown on your itinerary.</p>
+    <form id="f">
+      <label for="code">Record locator / confirmation code</label>
+      <input id="code" maxlength="6" autocapitalize="characters" required placeholder="e.g. K7M2QX">
+      <div class="row">
+        <div><label for="fn">First name</label><input id="fn" required></div>
+        <div><label for="ln">Last name</label><input id="ln" required></div>
+      </div>
+      <p><button>Search</button></p>
+      <div id="msg" class="err"></div>
+    </form>
+  </div>
+  <div id="out"></div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let R;
+const fmt=v=>{if(!v)return '—';const d=new Date(v);return isNaN(d)?esc(v):d.toLocaleString([],{dateStyle:'medium',timeStyle:'short'})};
+const boardAt=v=>{const d=new Date(v);return(!v||isNaN(d))?'—':new Date(d.getTime()-40*60000).toLocaleTimeString([],{timeStyle:'short'})};
+const bars=str=>{let h=0,x=0,o='';for(let i=0;i<64;i++){h=(h*31+str.charCodeAt(i%str.length)+i)>>>0;const w=1+h%3;if(i%2==0)o+=`<rect x="${x}" y="0" width="${w}" height="50"/>`;x+=w+1}return `<svg viewBox="0 0 ${x} 50" preserveAspectRatio="none" class="bars" fill="currentColor">${o}</svg>`};
+window.pass=i=>{
+  const s=R.segments[i],name=(R.lastName+'/'+R.firstName).toUpperCase();
+  $('pass').innerHTML=`<div class="ph"><b>✈ AEROTRACE</b><span>BOARDING PASS</span></div>
+  <div class="pb"><div class="meta">PASSENGER</div><div class="pn">${esc(name)}</div>
+  <div class="prow"><div><div class="meta">FROM</div><div class="big">${esc(s.from)}</div></div><div class="big">✈</div><div><div class="meta">TO</div><div class="big">${esc(s.to)}</div></div></div>
+  <div class="pgrid"><div><div class="meta">FLIGHT</div><b>${esc(s.flight)}</b></div><div><div class="meta">GATE</div><b>${esc(s.gate)||'TBD'}</b></div>
+  <div><div class="meta">SEAT</div><b>${esc(s.seat)||'—'}</b></div><div><div class="meta">BOARDS</div><b>${boardAt(s.departs)}</b></div>
+  <div><div class="meta">DEPARTS</div><b>${fmt(s.departs)}</b></div><div><div class="meta">CODE</div><b>${esc(R.code)}</b></div></div>
+  ${bars(R.code+s.flight+name)}<div class="meta" style="text-align:center">${esc(R.code)} · ${esc(s.flight)}</div></div>
+  <p class="noprint"><button onclick="print()">Print / Save as PDF</button> <button class="sec" onclick="$('pass').innerHTML=''">Close</button></p>`;
+  $('pass').scrollIntoView({behavior:'smooth'});
+};
+$('f').onsubmit=async e=>{
+  e.preventDefault();$('msg').textContent='';$('out').innerHTML='';
+  try{
+    const r=await fetch('/api/lookup',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({code:$('code').value,firstName:$('fn').value,lastName:$('ln').value})});
+    const d=await r.json();
+    if(!r.ok){$('msg').textContent=d.error;return}
+    R=d;const ok=!/cancel/i.test(d.status);
+    $('out').innerHTML=`<div class="card"><h2>${esc(d.firstName)} ${esc(d.lastName)} <span class="pill">${esc(d.status)}</span></h2>
+      <div class="meta">Confirmation code: <b>${esc(d.code)}</b></div>
+      ${d.segments.map((s,i)=>`<div class="seg"><div class="route">${esc(s.from)} → ${esc(s.to)}</div>
+      <div class="meta">Flight ${esc(s.flight)}</div>
+      <div class="meta">Departs: ${fmt(s.departs)} &nbsp; Arrives: ${fmt(s.arrives)}</div>
+      <div class="meta">Gate: ${esc(s.gate)||'TBD'} &nbsp; Seat: ${esc(s.seat)||'Unassigned'}</div>
+      ${ok?`<p><button class="sec" onclick="pass(${i})">View boarding pass</button></p>`:''}</div>`).join('')}</div>
+      <div class="card pass" id="pass"></div>`;
+  }catch{$('msg').textContent='Network error. Please try again.'}
+};
+</script></body></html>

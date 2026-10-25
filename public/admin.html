@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Admin | Aerotrace</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<link rel="stylesheet" href="/style.css"></head>
+<body>
+<header><b>✈ AEROTRACE</b><span>Admin</span></header>
+<main>
+  <div class="card" id="login">
+    <h2>Admin sign in</h2>
+    <label for="pw">Password</label><input id="pw" type="password">
+    <p><button id="go">Sign in</button></p><div id="lerr" class="err"></div>
+  </div>
+  <div id="app" hidden>
+    <div class="card">
+      <h2 id="ft">Create reservation</h2>
+      <div class="row">
+        <div><label>Code (blank = auto)</label><input id="code" maxlength="6"></div>
+        <div><label>Status</label><select id="status"><option>Confirmed</option><option>Pending</option><option>Checked in</option><option>Cancelled</option></select></div>
+      </div>
+      <div class="row">
+        <div><label>First name</label><input id="fn"></div>
+        <div><label>Last name</label><input id="ln"></div>
+      </div>
+      <label>Email (private, not shown to customers)</label><input id="em" type="email">
+      <h2 style="margin-top:18px">Flights</h2><div id="segs"></div>
+      <p><button class="sec" id="add">+ Add flight</button></p>
+      <button id="save">Save reservation</button> <button class="sec" id="reset">Clear</button>
+      <div id="m"></div>
+    </div>
+    <div class="card"><h2>Reservations</h2><div class="scroll"><table><thead><tr><th>Code</th><th>Passenger</th><th>Status</th><th></th></tr></thead><tbody id="list"></tbody></table></div></div>
+  </div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let key=sessionStorage.getItem('ak')||'',data=[],createdAt;
+const api=(m,u='/api/admin',b)=>fetch(u,{method:m,headers:{'Content-Type':'application/json','x-admin-key':key},body:b?JSON.stringify(b):undefined});
+function seg(s={}){const d=document.createElement('div');d.className='seg';
+  d.innerHTML=`<div class="row"><div><label>Flight #</label><input data-k="flight" value="${esc(s.flight)}"></div>
+  <div><label>From</label><input data-k="from" maxlength="3" value="${esc(s.from)}"></div>
+  <div><label>To</label><input data-k="to" maxlength="3" value="${esc(s.to)}"></div></div>
+  <div class="row"><div><label>Departs</label><input data-k="departs" type="datetime-local" value="${esc(s.departs)}"></div>
+  <div><label>Arrives</label><input data-k="arrives" type="datetime-local" value="${esc(s.arrives)}"></div></div>
+  <div class="row"><div><label>Gate</label><input data-k="gate" value="${esc(s.gate)}"></div><div><label>Seat</label><input data-k="seat" value="${esc(s.seat)}"></div></div>
+  <p><button class="sec" onclick="this.closest('.seg').remove()">Remove</button></p>`;$('segs').append(d)}
+function clearForm(){['code','fn','ln','em'].forEach(i=>$(i).value='');$('status').value='Confirmed';$('segs').innerHTML='';seg();createdAt=undefined;$('ft').textContent='Create reservation'}
+async function load(){const r=await api('GET');if(r.status===401){sessionStorage.removeItem('ak');$('lerr').textContent='Wrong password';return false}
+  data=await r.json();$('login').hidden=true;$('app').hidden=false;
+  $('list').innerHTML=data.map(x=>`<tr><td><b>${esc(x.code)}</b></td><td>${esc(x.firstName)} ${esc(x.lastName)}</td><td>${esc(x.status)}</td>
+  <td><button class="sec" onclick="edit('${esc(x.code)}')">Edit</button> <button class="del" onclick="del('${esc(x.code)}')">Delete</button></td></tr>`).join('')||'<tr><td colspan=4>No reservations yet</td></tr>';return true}
+window.edit=c=>{const x=data.find(d=>d.code===c);$('code').value=x.code;$('fn').value=x.firstName;$('ln').value=x.lastName;$('em').value=x.email;$('status').value=x.status;
+  $('segs').innerHTML='';x.segments.forEach(seg);createdAt=x.createdAt;$('ft').textContent='Edit '+x.code;scrollTo(0,0)}
+window.del=async c=>{if(confirm('Delete '+c+'?')){await api('DELETE','/api/admin?code='+c);load()}}
+$('go').onclick=()=>{key=$('pw').value;sessionStorage.setItem('ak',key);load()};
+$('add').onclick=()=>seg();$('reset').onclick=clearForm;
+$('save').onclick=async()=>{
+  const segments=[...document.querySelectorAll('#segs .seg')].map(d=>Object.fromEntries([...d.querySelectorAll('input')].map(i=>[i.dataset.k,i.value])));
+  const r=await api('POST','/api/admin',{code:$('code').value,firstName:$('fn').value,lastName:$('ln').value,email:$('em').value,status:$('status').value,segments,createdAt});
+  const d=await r.json();$('m').className=r.ok?'ok':'err';$('m').textContent=r.ok?'Saved. Code: '+d.code:d.error;if(r.ok){clearForm();load()}};
+clearForm();if(key)load();
+</script></body></html>
